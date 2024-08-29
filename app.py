@@ -21,14 +21,16 @@ def check_link(web_link):
     return re.match(regex, web_link) is not None 
 
 
-def chat_with_gpt():
+def chat_with_gpt(web_img, web_link):
+    st.header("Chatbot: ")
     prompt = st.chat_input("Please Enter Text input")
     if prompt:
         st.write(f"User has sent the following prompt: {prompt}")
 
 def submit():
-    st.session_state.web_link = st.session_state.link
-    st.session_state.link = ""
+    if not check_link(st.session_state.web_link):
+        st.session_state.web_link = st.session_state.link
+        st.session_state.link = ""
 
 def show_result(flag1, flag2):
     # Copy info from widgets into a different key in session state to avoid 
@@ -82,10 +84,11 @@ if st.session_state.input:
                 st.text("Please input a valid web link")
 
     st.button('Start', on_click=show_result(flag1,flag2)) # Callback changes it to result mode
+    
 else:
-   # Otherwise, not in input mode, so show result
-    st.write(f'There are {st.session_state.result[1]} {st.session_state.result[0]}s.')
+   # Otherwise, not in input mode, so show result   
     st.button('Reset', on_click=reset) # Callback changes it to input mode
+    chat_with_gpt(st.session_state.result[0],st.session_state.result[1])
 
 
 
