@@ -6,6 +6,8 @@ import os, re, openai, streamlit as st, numpy as np
 
 load_dotenv()
 
+openai.api_key = os.getenv('OPENAI_API_KEY')
+
 def check_link(web_link):
     # Check if website link is valid
     regex = re.compile(
@@ -19,10 +21,17 @@ def check_link(web_link):
     return re.match(regex, web_link) is not None 
 
 
-st.title("Scamurai System")
-st.subheader("Enter input below:")
+def chat_with_gpt():
+    prompt = st.chat_input("Please Enter Text input")
+    if prompt:
+        st.write(f"User has sent the following prompt: {prompt}")
 
-openai.api_key = os.getenv('OPENAI_API_KEY')
+def submit():
+    st.session_state.web_link = st.session_state.widget
+    st.session_state.widget = ""
+
+st.title("Scamurai System")
+# st.subheader("Enter input below:")
 
 # img_file_buffer = st.file_uploader('Upload a PNG image', type='png')
 # if img_file_buffer is not None:
@@ -33,24 +42,31 @@ col1, col2 = st.columns(2)
 with st.container():
     with col1:
         st.header("Website Image")
-        holder = st.empty()
-        top_image = holder.file_uploader('Choose Bottom Glass Image', type='jpg', key=1)
+        holder1 = st.empty()
+        top_image = holder1.file_uploader('Please Input Website Image', type='jpg', key=1)
         if top_image is not None:
             # st.write(top_image)
             # st.write({'filename': top_image.name, 'file_type': top_image.type, 'filesize': top_image.size})
-            # st.image(top_image, width=200)
-            holder.empty()
+            st.image(top_image, width=100)
+            holder1.empty()
     with col2:
         st.header("Website Link")
         holder2 = st.empty()
-        web_link = holder2.text_input("Enter Website Link", " ")
+        if "web_link" not in st.session_state:
+            st.session_state.web_link = ""
+
+        holder2.text_input("Enter Website Link", key="widget", on_change=submit)
+
+        web_link = st.session_state.web_link
         
         if check_link(web_link):
             st.text(web_link)
             holder2.empty()
             st.write("Website: ", web_link)
-        else:
-            web_link = holder2.text_input("Please enter a valid web address",  " ")
+        elif web_link != "":
+            st.text("Please input a valid web link")
+
+
 
 # def chat_with_gpt(prompt):
 
