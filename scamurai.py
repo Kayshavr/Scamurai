@@ -2,7 +2,8 @@
 from dotenv import load_dotenv
 from streamlit_chat import message
 from PIL import Image
-import os, re, openai as OpenAI, streamlit as st, numpy as np
+from openai import OpenAI
+import os, re, streamlit as st, numpy as np
 
 load_dotenv()
 
@@ -23,7 +24,9 @@ def chatgpt_connection(prompt):
         model="gpt-3.5-turbo",
     )
 
-    return response.choices[0].message.content.strip()
+    print(chat_completion.choices[0].message)
+
+    return chat_completion.choices[0].message.content.strip()
 
 def check_link(web_link):
     # Check if website link is valid
@@ -110,10 +113,4 @@ def main():
         chat_with_gpt(st.session_state.result[0],st.session_state.result[1])
 
 if __name__ == "__main__":
-    while True:
-        user_input = input ("You: ")
-        if user_input. lower() in ["quit", "exit", "bye"]:
-            break
-
-        response = chatgpt_connection(user_input)
-        print ("Chatbot: ", response)
+    main()
