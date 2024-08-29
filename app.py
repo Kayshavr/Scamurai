@@ -8,6 +8,24 @@ load_dotenv()
 
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
+def chat_with_gpt(prompt):
+
+    client = openai(
+        api_key=os.environ.get("OPENAI_API_KEY"),
+    )
+
+    response = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": "Say this is a test",
+            }
+        ],
+        model="gpt-3.5-turbo",
+    )
+
+    return response.choices[0].message.content.strip()
+
 def check_link(web_link):
     # Check if website link is valid
     regex = re.compile(
@@ -25,7 +43,9 @@ def chat_with_gpt(web_img, web_link):
     st.header("Chatbot: ")
     prompt = st.chat_input("Please Enter Text input")
     if prompt:
+        response = chat_with_gpt(prompt)
         st.write(f"User has sent the following prompt: {prompt}")
+        st.write(f"Response:: {response}")
 
 def submit():
     if not check_link(st.session_state.web_link):
@@ -89,26 +109,6 @@ else:
    # Otherwise, not in input mode, so show result   
     st.button('Reset', on_click=reset) # Callback changes it to input mode
     chat_with_gpt(st.session_state.result[0],st.session_state.result[1])
-
-
-
-# def chat_with_gpt(prompt):
-
-#     client = OpenAI(
-#         api_key=os.environ.get("OPENAI_API_KEY"),
-#     )
-
-#     response = client.chat.completions.create(
-#         messages=[
-#             {
-#                 "role": "user",
-#                 "content": "Say this is a test",
-#             }
-#         ],
-#         model="gpt-3.5-turbo",
-#     )
-
-#     return response.choices[0].message.content.strip()
 
 # if __name__ == "__main__":
     # while True:
